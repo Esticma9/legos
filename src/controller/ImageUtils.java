@@ -15,7 +15,7 @@ import javax.imageio.ImageIO;
 
 public abstract class ImageUtils {
     
-    public static final String CAM_URL = "192.168.0.106:8585";
+    public static final String CAM_URL = "192.168.0.100:8585";
     
     private static Image image = null;
     private static URL url;

@@ -1,18 +1,13 @@
 package controller;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import com.maze.BotMovement.BOT_ACTIONS;
 
 public class BotCalls {
 	private String IP_ADDRESS;
@@ -58,6 +53,28 @@ public class BotCalls {
 	            break;
 		}
 	}
+        
+        public boolean checkQueue(){
+            try {
+                dout.flush();
+                dout.writeBytes(" Q:count");
+                byte[] bytes = new byte[255];
+                socket.setSoTimeout(3000);
+                dinp.read(bytes);
+                String input = new String(bytes).trim();
+                System.out.println(input);
+                int queue = Integer.valueOf(input.split(":")[1]);
+                if(queue == 0){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(BotCalls.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
+            }
+        }
 	
 	private void SendMessage(String message) {
             try {
@@ -101,58 +118,4 @@ public class BotCalls {
 		}
             System.out.println("Messages sent in session: " + messagesSent);
 	}
-	
-        public static List<BOT_ACTIONS> translateCartesianToMovement(List<BOT_ACTIONS> cartesian){
-            List<BOT_ACTIONS> movementSol = new ArrayList<>();
-            //movementSol.add(BOT_ACTIONS.forward);
-            //BOT_ACTIONS prevAction = BOT_ACTIONS.forward;
-            BOT_ACTIONS prevAction = cartesian.get(0);
-            
-            for (BOT_ACTIONS bot_actions : cartesian) {
-                if(bot_actions == prevAction){
-                    movementSol.add(BOT_ACTIONS.forward);
-                }
-                else {
-                    if(prevAction == BOT_ACTIONS.right && bot_actions == BOT_ACTIONS.forward){
-                        movementSol.add(BOT_ACTIONS.left);
-                    }
-                    else if(prevAction == BOT_ACTIONS.left && bot_actions == BOT_ACTIONS.forward){
-                        movementSol.add(BOT_ACTIONS.right);
-                    }
-                    else if(prevAction == BOT_ACTIONS.right && bot_actions == BOT_ACTIONS.backward){
-                        movementSol.add(BOT_ACTIONS.right);
-                    }
-                    else if(prevAction == BOT_ACTIONS.left && bot_actions == BOT_ACTIONS.backward){
-                        movementSol.add(BOT_ACTIONS.left);
-                    }
-                    else if(prevAction == BOT_ACTIONS.forward && bot_actions == BOT_ACTIONS.right){
-                        movementSol.add(BOT_ACTIONS.right);
-                    }
-                    else if(prevAction == BOT_ACTIONS.backward && bot_actions == BOT_ACTIONS.right){
-                        movementSol.add(BOT_ACTIONS.left);
-                    }
-                    else if(prevAction == BOT_ACTIONS.forward && bot_actions == BOT_ACTIONS.left){
-                        movementSol.add(BOT_ACTIONS.left);
-                    }
-                    else if(prevAction == BOT_ACTIONS.backward && bot_actions == BOT_ACTIONS.left){
-                        movementSol.add(BOT_ACTIONS.right);
-                    }
-                    else {
-                        movementSol.add(BOT_ACTIONS.stop);
-                        System.out.println("Error!");
-                    }
-                    movementSol.add(BOT_ACTIONS.forward);
-                }
-                prevAction = bot_actions;
-            }
-            return movementSol;
-        }
-        
-	public enum BOT_ACTIONS{
-        forward,
-        backward,
-        stop,
-        left,
-        right
-    }
 }

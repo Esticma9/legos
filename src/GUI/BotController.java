@@ -1,10 +1,13 @@
 package GUI;
 
 import com.maze.BFSMazeSolver;
+import com.maze.BotMovement;
+import com.maze.BotMovement.BOT_DIRECTION;
+import com.maze.BotMovement.BOT_ACTIONS;
 import com.maze.Coordinate;
 import com.maze.Maze;
+import com.maze.MazeMovementSolver;
 import controller.BotCalls;
-import controller.BotCalls.BOT_ACTIONS;
 import controller.ImageUtils;
 import static controller.ImageUtils.getStandardDump;
 import java.awt.Image;
@@ -12,6 +15,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,12 +45,13 @@ public class BotController extends javax.swing.JFrame {
     private static Size finalSize = new Size(46,35);
     private static double [] greenData = new double[]{150};
     private static double [] redData = new double[]{75};
-    private static List<BOT_ACTIONS> SOLUTION;
     private Mat originalImage;
     private Mat MazeMat = null;
     
     private final String BOT_ADDRESS ="10.0.1.1";
     private final int BOT_PORT = 8888;
+    
+    private static BOT_DIRECTION lastDirection = BOT_DIRECTION.up;
     
     /**
      * Creates new form BotController
@@ -129,6 +134,7 @@ public class BotController extends javax.swing.JFrame {
         solveAllButton = new javax.swing.JButton();
         sendMovementButton = new javax.swing.JButton();
         useNewImage = new javax.swing.JCheckBox();
+        resetPosition = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Bot Controller");
@@ -164,7 +170,7 @@ public class BotController extends javax.swing.JFrame {
             }
         });
 
-        pictureSize.setText("1185,890");
+        pictureSize.setText("1185,880");
         pictureSize.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 pictureSizeActionPerformed(evt);
@@ -202,7 +208,7 @@ public class BotController extends javax.swing.JFrame {
 
         configurationPane.addTab("Size", jPanel1);
 
-        hsvMinBlueTextBox.setText("86,147,120");
+        hsvMinBlueTextBox.setText("66,153,83");
         hsvMinBlueTextBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 hsvMinBlueTextBoxActionPerformed(evt);
@@ -213,7 +219,7 @@ public class BotController extends javax.swing.JFrame {
 
         jLabel5.setText("HSVmax Blue");
 
-        hsvMaxBlueTextBox.setText("129,255,255");
+        hsvMaxBlueTextBox.setText("117,255,215");
         hsvMaxBlueTextBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 hsvMaxBlueTextBoxActionPerformed(evt);
@@ -253,7 +259,7 @@ public class BotController extends javax.swing.JFrame {
 
         jLabel8.setText("HSVmin Red");
 
-        hsvMinRedTextBox.setText("139,139,216");
+        hsvMinRedTextBox.setText("124,122,129");
         hsvMinRedTextBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 hsvMinRedTextBoxActionPerformed(evt);
@@ -262,7 +268,7 @@ public class BotController extends javax.swing.JFrame {
 
         jLabel9.setText("HSVmax Red");
 
-        hsvMaxRedTextBox.setText("180,175,255");
+        hsvMaxRedTextBox.setText("180,216,243");
         hsvMaxRedTextBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 hsvMaxRedTextBoxActionPerformed(evt);
@@ -307,7 +313,7 @@ public class BotController extends javax.swing.JFrame {
             }
         });
 
-        hsvMinGreenTextBox.setText("53,66,114");
+        hsvMinGreenTextBox.setText("49,41,168");
         hsvMinGreenTextBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 hsvMinGreenTextBoxActionPerformed(evt);
@@ -653,6 +659,13 @@ public class BotController extends javax.swing.JFrame {
         useNewImage.setSelected(true);
         useNewImage.setText("Use new image");
 
+        resetPosition.setText("Reset Pos");
+        resetPosition.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetPositionActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -663,18 +676,24 @@ public class BotController extends javax.swing.JFrame {
                     .addComponent(originalPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1)
                     .addComponent(jLabel2))
-                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(useNewImage)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(snapshotButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(startSolvingButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(updatePictureSettingsButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(initialSnapshotButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(solveAllButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(sendMovementButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(useNewImage)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(snapshotButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(startSolvingButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(updatePictureSettingsButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(initialSnapshotButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(solveAllButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(sendMovementButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(35, 35, 35)
+                        .addComponent(resetPosition)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
                     .addComponent(outputPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -704,7 +723,9 @@ public class BotController extends javax.swing.JFrame {
                         .addComponent(updatePictureSettingsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(59, 59, 59)
                         .addComponent(sendMovementButton, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(127, 127, 127))
+                        .addGap(57, 57, 57)
+                        .addComponent(resetPosition)
+                        .addGap(44, 44, 44))
                     .addComponent(outputPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(originalPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -734,7 +755,7 @@ public class BotController extends javax.swing.JFrame {
         }
         else
         {
-            processSolutionWithPictureRenew();
+            processSolutionSteps(4);
         }
     }//GEN-LAST:event_startSolvingButtonActionPerformed
 
@@ -797,7 +818,7 @@ public class BotController extends javax.swing.JFrame {
         }
         else
         {
-            processAllSolution();
+            processSolutionBySteps();
         }
     }//GEN-LAST:event_solveAllButtonActionPerformed
 
@@ -875,6 +896,12 @@ public class BotController extends javax.swing.JFrame {
         processPictureWithSliders();
     }//GEN-LAST:event_vMaxSliderStateChanged
 
+    private void resetPositionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetPositionActionPerformed
+        // TODO add your handling code here:
+        lastDirection= BOT_DIRECTION.up;
+        System.out.println("Position to UP");
+    }//GEN-LAST:event_resetPositionActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -936,71 +963,69 @@ public class BotController extends javax.swing.JFrame {
         originalImageLabel.repaint();
     }
     
-    private void processSolutionWithPictureRenew(){
+    private void processSolutionBySteps(){
         int fullIterations = 0;
-        takePicture();
-        processPicture();
-        while(!SOLUTION.isEmpty() || fullIterations>10){
-            processSolutionFirst5();
+        while(fullIterations<50){
+            processSolutionSteps(4);
+            isBotQueueEmpty();
+            System.out.println("Iteration: " + fullIterations + " completed");
             fullIterations++;
+            
         }
     }
     
-    private synchronized void processSolutionFirst5(){
+    private boolean isBotQueueEmpty(){
+        boolean isEmpty=false;
+        int i = 0;
+            try {
+                while(!isEmpty && (i<4)){
+                    BotCalls bc = new BotCalls(BOT_ADDRESS,BOT_PORT);
+                    Thread.sleep(400);
+                    isEmpty = bc.checkQueue();
+                    bc.CloseClient();
+                    if(isEmpty){
+                        break;
+                    }
+                    Thread.sleep(1200);
+                }
+            } catch (InterruptedException ex) {
+                Logger.getLogger(BotController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        i++;
+        return isEmpty;
+    }
+    
+    private BOT_DIRECTION processSolutionSteps(int maxSteps){
         try {
             takePicture();
-            processPicture();
-            //BotCalls bc = new BotCalls(BOT_ADDRESS,BOT_PORT);
-            Thread.sleep(500);
+            List<BOT_ACTIONS> cartesian = processPicture();
+            Thread.sleep(100);
+            
+            MazeMovementSolver mms = new MazeMovementSolver();
+            List<BotMovement> movements = mms.getAllMovements(cartesian, lastDirection);
+            
             int i = 0;
-            System.out.println("Solution count: " + SOLUTION.size());
-            while(i<7){
-                if(SOLUTION.isEmpty()){
-                    //bc.CloseClient();
-                    break;
+            
+            System.out.println("Solution count: " + movements.size());
+            
+            while(i<maxSteps){
+                for (BOT_ACTIONS action : movements.get(i).getActions()) {
+                    BotCalls bc = new BotCalls(BOT_ADDRESS,BOT_PORT);
+                    Thread.sleep(400);
+                    bc.SendMovement(action);
+                    Thread.sleep(200);
+                    bc.CloseClient();
                 }
-                BotCalls bc = new BotCalls(BOT_ADDRESS,BOT_PORT);
-                Thread.sleep(500);
-                bc.SendMovement(SOLUTION.get(0));
-                Thread.sleep(200);
-                bc.CloseClient();
-
-                SOLUTION.remove(0);
+                lastDirection = movements.get(i).getDirection();
                 i++;
             }
-            //bc.CloseClient();
+            System.out.println("last direction: " + lastDirection);
+            return movements.get(i).getDirection();
             
-            //Thread.sleep(1000);
-            processPicture();
         } catch (InterruptedException ex) {
             Logger.getLogger(BotController.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, ex.getMessage(),"Application Error",JOptionPane.ERROR_MESSAGE);
-        }
-    }
-    
-    private synchronized void processAllSolution(){
-        try {
-            takePicture();
-            processPicture();
-            Thread.sleep(2000);
-            
-            System.out.println("Solution count: " + SOLUTION.size());
-            while (!SOLUTION.isEmpty()){
-
-                BotCalls bc = new BotCalls(BOT_ADDRESS,BOT_PORT);
-                Thread.sleep(500);
-                bc.SendMovement(SOLUTION.get(0));
-                Thread.sleep(200);
-                bc.CloseClient();
-
-                SOLUTION.remove(0);
-            }
-                
-            
-            //bc.CloseClient();
-        } catch (InterruptedException ex) {
-            Logger.getLogger(BotController.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, ex.getMessage(),"Application Error",JOptionPane.ERROR_MESSAGE);
+            return lastDirection;
         }
     }
     
@@ -1039,9 +1064,10 @@ public class BotController extends javax.swing.JFrame {
     }
     
     
-    private void processPicture() {
+    private List<BOT_ACTIONS> processPicture() {
         if(MazeMat == null){
            JOptionPane.showMessageDialog(null, "First take an image from the maze without robots!");
+           return null;
         }
         else
         {
@@ -1074,11 +1100,13 @@ public class BotController extends javax.swing.JFrame {
             List<BOT_ACTIONS> cartesianSolution = bfs(mazeSolution);
             outputTextArea.append(cartesianSolution.toString());
             outputTextArea.append("\r\n");
-            SOLUTION = BotCalls.translateCartesianToMovement(cartesianSolution);
-            outputTextArea.append(SOLUTION.toString());
+            
+            outputTextArea.append(cartesianSolution.toString());
 
             outputImageLabel.setIcon(maze);
             outputImageLabel.repaint();
+            
+            return cartesianSolution;
         }
     }
     
@@ -1165,6 +1193,7 @@ public class BotController extends javax.swing.JFrame {
     private javax.swing.JPanel outputPanel;
     private javax.swing.JTextArea outputTextArea;
     private javax.swing.JTextField pictureSize;
+    private javax.swing.JButton resetPosition;
     private javax.swing.JSlider sMaxSlider;
     private javax.swing.JSlider sMinSlider;
     private javax.swing.JButton sendMovementButton;
