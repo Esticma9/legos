@@ -1,6 +1,6 @@
 package com.maze;
 
-import controller.BotCalls.BOT_ACTIONS;
+import com.maze.BotMovement.BOT_ACTIONS;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;

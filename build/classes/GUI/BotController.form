@@ -36,20 +36,29 @@
                   <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <Component id="useNewImage" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Component id="useNewImage" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          </Group>
+                          <Component id="snapshotButton" max="32767" attributes="0"/>
+                          <Component id="startSolvingButton" max="32767" attributes="0"/>
+                          <Component id="updatePictureSettingsButton" alignment="0" max="32767" attributes="0"/>
+                          <Component id="initialSnapshotButton" alignment="0" max="32767" attributes="0"/>
+                          <Component id="solveAllButton" alignment="1" max="32767" attributes="0"/>
+                          <Component id="sendMovementButton" alignment="1" max="32767" attributes="0"/>
+                      </Group>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="snapshotButton" max="32767" attributes="0"/>
-                  <Component id="startSolvingButton" max="32767" attributes="0"/>
-                  <Component id="updatePictureSettingsButton" alignment="0" max="32767" attributes="0"/>
-                  <Component id="initialSnapshotButton" alignment="0" max="32767" attributes="0"/>
-                  <Component id="solveAllButton" alignment="1" max="32767" attributes="0"/>
-                  <Component id="sendMovementButton" alignment="1" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
+                      <Component id="resetPosition" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
+                  </Group>
               </Group>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                   <Component id="outputPanel" min="-2" max="-2" attributes="0"/>
@@ -83,7 +92,9 @@
                       <Component id="updatePictureSettingsButton" min="-2" pref="37" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="59" max="-2" attributes="0"/>
                       <Component id="sendMovementButton" min="-2" pref="37" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="127" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="57" max="-2" attributes="0"/>
+                      <Component id="resetPosition" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="44" max="-2" attributes="0"/>
                   </Group>
                   <Component id="outputPanel" max="32767" attributes="0"/>
                   <Component id="originalPanel" alignment="0" max="32767" attributes="0"/>
@@ -246,7 +257,7 @@
                 </Component>
                 <Component class="javax.swing.JTextField" name="pictureSize">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="1185,890"/>
+                    <Property name="text" type="java.lang.String" value="1185,880"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pictureSizeActionPerformed"/>
@@ -302,7 +313,7 @@
               <SubComponents>
                 <Component class="javax.swing.JTextField" name="hsvMinBlueTextBox">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="86,147,120"/>
+                    <Property name="text" type="java.lang.String" value="66,153,83"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hsvMinBlueTextBoxActionPerformed"/>
@@ -320,7 +331,7 @@
                 </Component>
                 <Component class="javax.swing.JTextField" name="hsvMaxBlueTextBox">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="129,255,255"/>
+                    <Property name="text" type="java.lang.String" value="117,255,215"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hsvMaxBlueTextBoxActionPerformed"/>
@@ -381,7 +392,7 @@
                 </Component>
                 <Component class="javax.swing.JTextField" name="hsvMinRedTextBox">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="139,139,216"/>
+                    <Property name="text" type="java.lang.String" value="124,122,129"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hsvMinRedTextBoxActionPerformed"/>
@@ -394,7 +405,7 @@
                 </Component>
                 <Component class="javax.swing.JTextField" name="hsvMaxRedTextBox">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="180,175,255"/>
+                    <Property name="text" type="java.lang.String" value="180,216,243"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hsvMaxRedTextBoxActionPerformed"/>
@@ -458,7 +469,7 @@
                 </Component>
                 <Component class="javax.swing.JTextField" name="hsvMinGreenTextBox">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="53,66,114"/>
+                    <Property name="text" type="java.lang.String" value="49,41,168"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hsvMinGreenTextBoxActionPerformed"/>
@@ -869,6 +880,14 @@
         <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" value="Use new image"/>
       </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="resetPosition">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Reset Pos"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="resetPositionActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>
